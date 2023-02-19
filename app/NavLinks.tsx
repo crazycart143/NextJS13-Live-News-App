@@ -17,7 +17,7 @@ function NavLinks() {
   //and get the last value which is technology and compare to path
 
   return (
-    <nav className="text-center grid grid-cols-4 md:grid-cols-7 text-xs md:text-sm gap-4 pb-10 max-w-6xl mx-auto border-b">
+    <nav className="grid max-w-6xl grid-cols-4 gap-4 pb-10 mx-auto text-xs text-center border-b md:grid-cols-7 md:text-sm">
       {categories.map((category) => (
         <NavLink
           key={category}
