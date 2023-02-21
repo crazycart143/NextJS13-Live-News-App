@@ -1,13 +1,3 @@
-//if it is type category, it can only be one of the
-type Category =
-  | "general"
-  | "business"
-  | "entertainment"
-  | "health"
-  | "science"
-  | "sports"
-  | "techology";
-
 type Article = {
   author: string | null;
   category: string;
@@ -32,3 +22,13 @@ type NewsResponse = {
   pagination: Pagination;
   data: Article[];
 };
+
+//if it is type category, it can only be one of the
+type Category =
+  | "general"
+  | "business"
+  | "entertainment"
+  | "health"
+  | "science"
+  | "sports"
+  | "techology";

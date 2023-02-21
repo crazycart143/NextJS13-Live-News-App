@@ -1,31 +1,20 @@
 import { gql } from "graphql-request";
 import sortNewsByImage from "./sortNewsByImage";
-
 const fetchNews = async (
   category?: Category | string,
   keywords?: string,
   isDynamic?: boolean
 ) => {
-  //GraphQL query
+  // graphQL query
   const query = gql`
-    query MyQuery(
-      $access_key: String!
-      $categories: String!
-      $keywords: String
-    ) {
+    query myQuery($access_key: String!, $limit: String, $offset: String) {
       myQuery(
-        access_key: "a1a8eee12e2f5e939f7e90d7be29cb28"
-        categories: $categories
-        countries: "gb"
+        access_key: $access_key
+        countries: "ph"
+        limit: $limit
+        offset: $offset
         sort: "published_desc"
-        keywords: $keywords
       ) {
-        pagination {
-          count
-          limit
-          offset
-          total
-        }
         data {
           author
           category
@@ -38,48 +27,46 @@ const fetchNews = async (
           title
           url
         }
+        pagination {
+          count
+          limit
+          offset
+          total
+        }
       }
     }
   `;
-  //fetch function with NextJS 13 caching
+
+  // Fetch function w/ next 13
   const res = await fetch(
     "https://midsayap.stepzen.net/api/coiled-parrot/__graphql",
     {
       method: "POST",
       cache: isDynamic ? "no-cache" : "default",
-      //you will always get up to date with latest news every after 20 seconds
-      //revalidate for 20 seconds will get new data
-      //if it is dynamic, then we dont need to revalidate it thats why it is 0
-      //else if not dynamic, revalidate every after 20 seconds
-      //the cached value is gonna be served in 20 second value
-      //after 20 seconds, its going to refresh the new value
-      //this is called ISR - Incremental Static Generation
-      next: isDynamic ? { revalidate: 0 } : { revalidate: 20 },
+      next: isDynamic ? { revalidate: 0 } : { revalidate: 10000 },
       headers: {
-        //this is used because we are sending json to stringify
         "Content-Type": "application/json",
         Authorization: `Apikey ${process.env.STEPZEN_API_KEY}`,
       },
       body: JSON.stringify({
         query,
-        //stepzen expects variables when using rest API
         variables: {
-          access_key: process.env.MEDIASTACK_API_KEY,
+          access_key: process.env.ACCESS_KEY,
           categories: category,
           keywords: keywords,
         },
       }),
     }
   );
-
+  console.log("LOADING NEW DATA FROM API FOR CATEGORY -> ", category, keywords);
   const newsResponse = await res.json();
-  //Sort function by images vs not images present
+  // sort function
   const news = sortNewsByImage(newsResponse.data.myQuery);
 
-  //return response
   return news;
+  // return results
 };
 
 export default fetchNews;
 
-//stepzen import curl "http://api.mediastack.com/v1/news?access_key=a1a8eee12e2f5e939f7e90d7be29cb28"
+//stepzen import curl "http://api.mediastack.com/v1/news?access_key=a1a8eee12e2f5e939f7e90d7be29cb28&countries=ph&limit=100&offset=0&sort=published_desc"
