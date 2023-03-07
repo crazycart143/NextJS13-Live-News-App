@@ -2,6 +2,7 @@ import Image from "next/image";
 import { categories } from "../constants";
 import fetchNews from "../lib/fetchNews";
 import NewsList from "./NewsList";
+import response from "../response.json";
 
 // pre render news
 export default async function Home() {

@@ -6,7 +6,7 @@ type Props = {
 
 function NewsList({ news }: Props) {
   return (
-    <main>
+    <main className="grid grid-cols-1 gap-10 p-10 md:grid-cols-2 lg:grid-cols-3">
       {/* Articles */}
       {news.data.map((article) => (
         <Article key={article.title} article={article} />
